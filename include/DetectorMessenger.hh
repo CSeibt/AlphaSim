@@ -66,6 +66,9 @@ class DetectorMessenger: public G4UImessenger
     G4UIcmdWithADoubleAndUnit* fTargRadiusCmd;
     G4UIcmdWithADoubleAndUnit* fDetectThicknessCmd;
     G4UIcmdWithADoubleAndUnit* fTargLengthCmd;
+    G4UIcmdWithADoubleAndUnit* fTargetHalfXCmd;
+    G4UIcmdWithADoubleAndUnit* fTargetHalfYCmd;
+    G4UIcmdWithADoubleAndUnit* fTargetHalfZCmd;
     G4UIcmdWithADoubleAndUnit* fDetectLengthCmd;
     G4UIcmdWithADoubleAndUnit* fStepMaxDetCmd;
     G4UIcmdWithADoubleAndUnit* fStepMaxTarCmd;

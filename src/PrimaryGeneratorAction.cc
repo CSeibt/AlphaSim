@@ -106,13 +106,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   }
   G4VSolid* detSolid = detVolume->GetSolid();
   G4Tubs* detCylSolid = dynamic_cast<G4Tubs*>(detSolid);
-  if (detCylSolid) {
-    G4cout << "Found detector solid: G4Tubs with radius " << detCylSolid->GetOuterRadius()/cm << " cm and length " << 2*detCylSolid->GetZHalfLength()/cm << " cm" << G4endl;
-  }
   G4Box* detBoxSolid = dynamic_cast<G4Box*>(detSolid);
-  if (detBoxSolid) {
-    G4cout << "Found detector solid: G4Box with half-lengths " << detBoxSolid->GetXHalfLength()/cm << " cm, " << detBoxSolid->GetYHalfLength()/cm << " cm, " << detBoxSolid->GetZHalfLength()/cm << " cm" << G4endl;
-  }
   if (!detCylSolid && !detBoxSolid) {
       G4ExceptionDescription msg;
       msg << "Detector solid is neither a G4Tubs nor a G4Box !";
@@ -134,11 +128,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4Polycone* TargetSolidPolycone = dynamic_cast<G4Polycone*>(TargetSolid);
   if (TargetSolidCyl) {
     fTargetSolidType = "G4Tubs";
-    G4cout << "Found target solid: G4Tubs with radius " << TargetSolidCyl->GetOuterRadius()/cm << " cm and length " << 2*TargetSolidCyl->GetZHalfLength()/cm << " cm" << G4endl;
   }
   if (TargetSolidBox) {
     fTargetSolidType = "G4Box";
-    G4cout << "Found target solid: G4Box with half-lengths " << TargetSolidBox->GetXHalfLength()/cm << " cm, " << TargetSolidBox->GetYHalfLength()/cm << " cm, " << TargetSolidBox->GetZHalfLength()/cm << " cm" << G4endl;
+    
   }
   if (TargetSolidPolycone) {
     fTargetSolidType = "G4Polycone";

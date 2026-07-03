@@ -45,7 +45,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
 :G4UImessenger(),
  fDetector(Det), fRdecayDir(0), fDetDir(0),
  fTargMatCmd(0), fDetectMatCmd(0), fTargRadiusCmd(0),
- fDetectThicknessCmd(0), fTargLengthCmd(0), fDetectLengthCmd(0), fSimWaferCmd(0)
+ fDetectThicknessCmd(0), fTargLengthCmd(0), fTargetHalfXCmd(0), fTargetHalfYCmd(0), fTargetHalfZCmd(0), fDetectLengthCmd(0), fSimWaferCmd(0)
 {
   fRdecayDir = new G4UIdirectory("/alpha/");
   fRdecayDir->SetGuidance("commands specific to this example");
@@ -54,7 +54,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
   fDetDir = new G4UIdirectory("/alpha/det/",broadcast);
   fDetDir->SetGuidance("detector construction commands");
 
-  fTargMatCmd = new G4UIcmdWithAString("/alpha/det/setTargetMate",this);
+  fTargMatCmd = new G4UIcmdWithAString("/alpha/det/setTargetMaterial",this);
   fTargMatCmd->SetGuidance("Select material of the target");
   fTargMatCmd->SetParameterName("choice",false);
   fTargMatCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -72,8 +72,26 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
   fTargLengthCmd->SetParameterName("choice",false);
   fTargLengthCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+  fTargetHalfXCmd = new G4UIcmdWithADoubleAndUnit("/alpha/det/setTargetHalfX", this);
+  fTargetHalfXCmd->SetGuidance("Set the Target Half X for a Box.");
+  fTargetHalfXCmd->SetUnitCategory("Length");
+  fTargetHalfXCmd->SetParameterName("choice",false);
+  fTargetHalfXCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-  fDetectMatCmd = new G4UIcmdWithAString("/alpha/det/setDetectorMate",this);
+  fTargetHalfYCmd = new G4UIcmdWithADoubleAndUnit("/alpha/det/setTargetHalfY", this);
+  fTargetHalfYCmd->SetGuidance("Set the Target Half Y for a Box.");
+  fTargetHalfYCmd->SetUnitCategory("Length");
+  fTargetHalfYCmd->SetParameterName("choice",false);
+  fTargetHalfYCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+  fTargetHalfZCmd = new G4UIcmdWithADoubleAndUnit("/alpha/det/setTargetHalfZ", this);
+  fTargetHalfZCmd->SetGuidance("Set the Target Half Z for a Box.");
+  fTargetHalfZCmd->SetUnitCategory("Length");
+  fTargetHalfZCmd->SetParameterName("choice",false);
+  fTargetHalfZCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+
+  fDetectMatCmd = new G4UIcmdWithAString("/alpha/det/setDetectorMaterial",this);
   fDetectMatCmd->SetGuidance("Select Material of the Detector.");
   fDetectMatCmd->SetParameterName("choice",false);
   fDetectMatCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -107,6 +125,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* Det)
   fTargetXCmd->SetParameterName("choice",false);
   fTargetXCmd->SetUnitCategory("Length");
   fTargetXCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 
   // fCoverThicknessCmd = new G4UIcmdWithADoubleAndUnit("/alpha/det/setCoverThickness",this);
   // fCoverThicknessCmd->SetGuidance("Set Cover Thickness");
@@ -149,6 +168,9 @@ DetectorMessenger::~DetectorMessenger()
   delete fTargRadiusCmd;
   delete fDetectThicknessCmd;
   delete fTargLengthCmd;
+  delete fTargetHalfXCmd;
+  delete fTargetHalfYCmd;
+  delete fTargetHalfZCmd;
   delete fDetectLengthCmd;
   delete fDetDir;
   delete fRdecayDir;
@@ -175,6 +197,15 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   }
   else if (command == fTargRadiusCmd ){
     fDetector->SetTargetRadius(fTargLengthCmd->GetNewDoubleValue(newValue));
+  }
+  else if (command == fTargetHalfXCmd ){
+    fDetector->SetTargetBoxHalfX(fTargetHalfXCmd->GetNewDoubleValue(newValue));
+  }
+  else if (command == fTargetHalfYCmd ){
+    fDetector->SetTargetBoxHalfY(fTargetHalfYCmd->GetNewDoubleValue(newValue));
+  }
+  else if (command == fTargetHalfZCmd ){
+    fDetector->SetTargetBoxHalfZ(fTargetHalfZCmd->GetNewDoubleValue(newValue));
   }
   else if (command == fDetectMatCmd ){
     fDetector->SetDetectorMaterial(newValue);

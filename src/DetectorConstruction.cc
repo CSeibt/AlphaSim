@@ -66,7 +66,7 @@
 
 DetectorConstruction::DetectorConstruction()
 :G4VUserDetectorConstruction(),
- fTargetLength(0.1*cm), fTargetRadius(1.*cm), fTargetMater(0), fLogicTarget(0), fTargetMaterOpt("Gadolinium"),
+ fTargetLength(0.1*cm), fTargetRadius(1.*cm), fTargetHalfX(0.5 *cm), fTargetHalfY(0.5 *cm), fTargetHalfZ(0.5 *cm), fTargetMater(0), fLogicTarget(0), fTargetMaterOpt("Gadolinium"),
  fDetectorLength(271.2 * mm), fDetectorThickness(318./2. * mm), fDetectorMater(0), fLogicDetector(0),
  fWorldLength(fDetectorLength*2.+fTargetLength), fWorldRadius(std::max(fTargetRadius,fDetectorThickness)), fWorldMater(0), fPhysiWorld(0),
  // fCoverLength(1. * nm),fCoverMater(0), fChamberMater(0), fAnodeMater(0), fRodMater(0),fLogicAnode(0), fLogicGridUp(0), fLogicGridDo(0),
@@ -272,6 +272,13 @@ void DetectorConstruction::DefineMaterials()
 
       fTargetMater   = Platinum;
     }
+    else if (fTargetMaterOpt == "PEN") {
+      G4Material* PEN = new G4Material("PEN", 1.36*g/cm3, 3, kStateSolid);
+      PEN->AddElement(C, 14);
+      PEN->AddElement(H, 10);
+      PEN->AddElement(O, 4);
+      fTargetMater = PEN;
+    }
     else if(fTargetMaterOpt == "Silicon"){
       //Silicon for the ion implantation
       fTargetMater  = Silicon;
@@ -435,8 +442,8 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
     fLogicTarget = new G4LogicalVolume(sTarget, fTargetMater,"Target");
     new G4PVPlacement(0, G4ThreeVector(fTarX,fTarY,-0.5*fDetectorLength+0.5*fTargetLength+fTarZ),fLogicTarget,"TargetPhys",fLogicDetector,false,0);
   }
-  else if(fTargetShape == "Square"){
-    G4Box* sTarget = new G4Box("target",0.5*fTargetRadius ,0.5*fTargetRadius ,0.5*fTargetLength);
+  else if(fTargetShape == "Box"){
+    G4Box* sTarget = new G4Box("Target",fTargetHalfX ,fTargetHalfY ,fTargetHalfZ);
     fLogicTarget = new G4LogicalVolume(sTarget, fTargetMater,"Target");
     new G4PVPlacement(0, G4ThreeVector(fTarX,fTarY,-0.5*fDetectorLength+0.5*fTargetLength+fTarZ),fLogicTarget,"TargetPhys",fLogicDetector,false,0);
   }
@@ -834,7 +841,27 @@ void DetectorConstruction::SetTargetLength(G4double value)
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+  //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void DetectorConstruction::SetTargetBoxHalfX(G4double val)
+{
+  fTargetHalfX = val;
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+void DetectorConstruction::SetTargetBoxHalfY(G4double val)
+{
+  fTargetHalfY = val;
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+void DetectorConstruction::SetTargetBoxHalfZ(G4double val)
+{
+  fTargetHalfZ = val;
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+  //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void DetectorConstruction::SetDetectorThickness(G4double value)
 {
@@ -883,6 +910,23 @@ G4LogicalVolume* DetectorConstruction::GetLogicTarget()
 G4double DetectorConstruction::GetDetectorLength()
 {
   return fDetectorLength;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4double DetectorConstruction::GetTargetBoxHalfX()
+{
+  return fTargetHalfX;
+}
+
+G4double DetectorConstruction::GetTargetBoxHalfY()
+{
+  return fTargetHalfY;
+}
+
+G4double DetectorConstruction::GetTargetBoxHalfZ()
+{
+  return fTargetHalfZ;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

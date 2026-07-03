@@ -19,7 +19,7 @@
 
 using namespace std;
 
-TH1D* GetEnergyInDetector(TTree* tree, TTreeIndex* index) {
+TH1D* GetEnergyInDetector(TTree* tree, TTreeIndex* index, int verbose = 0) {
     TH1D* hist = new TH1D("EnergyInDetector", "Energy Deposited in Detector;Energy (MeV);Counts", 1000, 0, 10);
     Double_t EventID, TrackID, Energy, VolumeID, x, y, z;
     tree->SetBranchAddress("EventID", &EventID);
@@ -39,7 +39,7 @@ TH1D* GetEnergyInDetector(TTree* tree, TTreeIndex* index) {
     for (Long64_t i = 0; i < nEntries; ++i) {
         tree->GetEntry(index_list[i]);
         if (EventID != current_event_id) {
-            cout << "Current Event ID: " << EventID << ", finished Event ID: " << current_event_id << ", Energy Sum: " << current_energy_sum << " MeV" << endl;
+            if (verbose > 0) {cout << "Current Event ID: " << EventID << ", finished Event ID: " << current_event_id << ", Energy Sum: " << current_energy_sum << " MeV" << endl;}
             if (current_energy_sum > 0) {hist->Fill(current_energy_sum);}
             current_event_id = EventID;
             current_energy_sum = 0.0;
@@ -53,7 +53,7 @@ TH1D* GetEnergyInDetector(TTree* tree, TTreeIndex* index) {
 }
 
 void EvalEdepTree() {
-    TString file_name = "run148Gd.root";
+    TString file_name = "../alpha_build/run238U.root";
     TString tree_name = "EDeps";
 
     TFile *file = new TFile(file_name, "READ");

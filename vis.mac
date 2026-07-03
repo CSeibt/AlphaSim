@@ -3,12 +3,21 @@
 #
 # Sets some default verbose
 # and initializes the graphic.
+
+#Set up geometry
+/alpha/det/setTargetShape Box
+/alpha/det/setTargetMaterial PEN 
+/alpha/det/setTargetHalfX 10 cm
+/alpha/det/setTargetHalfY 10 cm
+/alpha/det/setTargetHalfZ 0.075 mm
 #
 /control/verbose 2
 /run/verbose 2
 #
 #/alpha/det/simWafer false
 /run/initialize
+#
+#
 #
 # Use this open statement to create an OpenGL view:
 /vis/open OGL 600x600-0+0

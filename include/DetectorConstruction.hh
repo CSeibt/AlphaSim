@@ -60,6 +60,10 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetTargetRadius (G4double value);
     void SetTargetMaterial (G4String);
 
+    void SetTargetBoxHalfX(G4double val);
+    void SetTargetBoxHalfY(G4double val);
+    void SetTargetBoxHalfZ(G4double val);
+
     void SetTargetX(G4double val);
     void SetTargetY(G4double val);
     void SetTargetZ(G4double val);
@@ -83,6 +87,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     G4double GetTargetLength();
     G4double GetTargetRadius();
+    G4double GetTargetBoxHalfX();
+    G4double GetTargetBoxHalfY();
+    G4double GetTargetBoxHalfZ();
     G4Material* GetTargetMaterial();
     G4LogicalVolume* GetLogicTarget();
 
@@ -110,6 +117,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume*    fLogicTarget;
     G4String            fTargetMaterOpt;
     G4bool              fSimWafer;
+    G4double            fTargetHalfX;
+    G4double            fTargetHalfY;
+    G4double            fTargetHalfZ;
 
     // Detector params:
     G4double            fDetectorLength;
@@ -169,6 +179,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4UserLimits*       fStepLimitDet;            // pointer to user step limits
     G4UserLimits*       fStepLimitTar;            // pointer to user step limits
 
+    // Target Pos:
     G4double            fTarX;
     G4double            fTarY;
     G4double            fTarZ;
