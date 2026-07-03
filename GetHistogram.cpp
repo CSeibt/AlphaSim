@@ -77,7 +77,7 @@ void GetEfficiency(TH1D* hist, Long64_t n_events, double Emin, double Emax) {
 }
 
 void GetHistogram() {
-    TString file_name = "../alpha_build/run238U.root";
+    TString file_name = "../alpha_build/run238U_full_chain.root";
     TString histname = "H11";
     TString parent_tree_name = "ParentPos";
 

@@ -1,0 +1,29 @@
+#                                                                         
+/control/verbose 2
+/run/verbose 1
+#Set up geometry
+/alpha/det/setTargetShape Box
+/alpha/det/setTargetMaterial PEN 
+/alpha/det/setTargetHalfX 10 cm
+/alpha/det/setTargetHalfY 10 cm
+/alpha/det/setTargetHalfZ 75 um
+#
+/run/numberOfThreads 4
+
+/run/initialize
+#/process/had/rdm/nucleusLimits 237 239 91 93
+/process/had/rdm/thresholdForVeryLongDecayTime 1e20 y
+
+/generator/setPositionMode InBulk
+/generator/setDepthInTarget 75 um
+#/generator/setPositionMode Point
+#/generator/setPositionX 0
+#/generator/setPositionY 0
+#/generator/setPositionZ 1 cm
+/gun/particle ion
+/gun/ion 92 238
+
+/run/fileName run238U_full_chain.root
+/run/printProgress 1000
+/run/beamOn 100000
+

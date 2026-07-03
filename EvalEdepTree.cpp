@@ -53,7 +53,7 @@ TH1D* GetEnergyInDetector(TTree* tree, TTreeIndex* index, int verbose = 0) {
 }
 
 void EvalEdepTree() {
-    TString file_name = "../alpha_build/run238U.root";
+    TString file_name = "../alpha_build/run238U_full_chain.root";
     TString tree_name = "EDeps";
 
     TString histname = "H11";
