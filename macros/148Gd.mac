@@ -1,0 +1,21 @@
+#                                                                         
+/control/verbose 2
+/run/verbose 1
+#
+/run/numberOfThreads 4
+
+/run/initialize
+
+/generator/setPositionMode InBulk
+/generator/setDepthInTarget 1
+#/generator/setPositionMode OnSurface
+#/generator/setPositionMode Point
+#/generator/setPositionX 0
+#/generator/setPositionY 0
+#/generator/setPositionZ 1 cm
+/gun/particle ion
+/gun/ion 64 148
+
+/run/fileName run148Gd.root
+/run/beamOn 10000
+

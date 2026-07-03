@@ -1,0 +1,3 @@
+DetectorConstruction.cc:
+Old DetectorConstruction with commented out parts. Removed from the active file to 
+increase clearness.
