@@ -56,6 +56,8 @@ void EvalEdepTree() {
     TString file_name = "../alpha_build/run238U.root";
     TString tree_name = "EDeps";
 
+    TString histname = "H11";
+
     TFile *file = new TFile(file_name, "READ");
     TTree *tree = (TTree*)file->Get(tree_name);
     
@@ -78,8 +80,16 @@ void EvalEdepTree() {
     }
 
     TH1D* energy_hist = GetEnergyInDetector(tree, index);
+    TH1D* energy_hist_h11 = (TH1D*)file->Get(histname);
     TCanvas* canvas = new TCanvas("canvas", "Energy Deposited in Detector", 1200, 600);
     energy_hist->Draw();
+    energy_hist_h11->SetLineColor(kRed);
+    energy_hist_h11->Draw("same, hist");
+    TLegend* legend = new TLegend(0.7, 0.7, 0.9, 0.9);
+    legend->AddEntry(energy_hist, "Simulated Energy Deposited", "l");
+    legend->AddEntry(energy_hist_h11, "H11 Energy Deposited", "l");
+    legend->Draw();
+    canvas->SaveAs("EnergyDepositedComparison.png");
 
 
     //delete file;
