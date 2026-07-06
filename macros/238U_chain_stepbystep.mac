@@ -1,0 +1,85 @@
+#                                                                         
+/control/verbose 2
+/run/verbose 1
+#Set up geometry
+/alpha/det/setTargetShape Box
+/alpha/det/setTargetMaterial PEN 
+/alpha/det/setTargetHalfX 10 cm
+/alpha/det/setTargetHalfY 10 cm
+/alpha/det/setTargetHalfZ 75 um
+#
+/run/numberOfThreads 4
+
+/run/initialize
+/process/had/rdm/nucleusLimits 237 239 91 93
+/process/had/rdm/thresholdForVeryLongDecayTime 1e20 y
+
+/generator/setPositionMode InBulk
+/generator/setDepthInTarget 75 um
+#/generator/setPositionMode Point
+#/generator/setPositionX 0
+#/generator/setPositionY 0
+#/generator/setPositionZ 1 cm
+/gun/particle ion
+/gun/ion 92 238
+
+/run/fileName run238U_bulk.root
+/run/printProgress 1000
+/run/beamOn 10000000
+
+
+/process/had/rdm/nucleusLimits 233 235 91 93
+/gun/particle ion
+/gun/ion 92 234
+
+/run/fileName run234U_bulk.root
+/run/beamOn 10000000
+
+
+/process/had/rdm/nucleusLimits 229 231 89 91
+/gun/particle ion
+/gun/ion 90 230
+
+/run/fileName run230Th_bulk.root
+/run/beamOn 10000000
+
+
+/process/had/rdm/nucleusLimits 225 227 87 89
+/gun/particle ion
+/gun/ion 88 226
+
+/run/fileName run226Ra_bulk.root
+/run/beamOn 10000000
+
+
+/process/had/rdm/nucleusLimits 221 223 85 87
+/gun/particle ion
+/gun/ion 86 222
+
+/run/fileName run222Rn_bulk.root
+/run/beamOn 10000000
+
+
+/process/had/rdm/nucleusLimits 217 219 83 85
+/gun/particle ion
+/gun/ion 84 218
+
+/run/fileName run218Po_bulk.root
+/run/beamOn 10000000
+
+
+/process/had/rdm/nucleusLimits 213 215 83 85
+/gun/particle ion
+/gun/ion 84 214
+
+/run/fileName run214Po_bulk.root
+/run/beamOn 10000000
+
+
+/process/had/rdm/nucleusLimits 209 211 83 85
+/gun/particle ion
+/gun/ion 84 210
+
+/run/fileName run210Po_bulk.root
+/run/beamOn 10000000
+

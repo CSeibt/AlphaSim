@@ -19,6 +19,39 @@
 
 using namespace std;
 
+TH1D* GetEnergyInDetector(TTree* tree, TTreeIndex* index, int verbose = 0) {
+    TH1D* hist = new TH1D("EnergyInDetector", "Energy Deposited in Detector;Energy (MeV);Counts", 1000, 0, 10);
+    Double_t EventID, TrackID, Energy, VolumeID, x, y, z;
+    tree->SetBranchAddress("EventID", &EventID);
+    tree->SetBranchAddress("TrackID", &TrackID);
+    tree->SetBranchAddress("Energy", &Energy);
+    tree->SetBranchAddress("VolumeID", &VolumeID);
+    tree->SetBranchAddress("x", &x);
+    tree->SetBranchAddress("y", &y);
+    tree->SetBranchAddress("z", &z);
+
+    Long64_t* index_list = index->GetIndex();
+    Long64_t nEntries = tree->GetEntries();
+
+    Double_t current_event_id = -1;
+    Double_t current_energy_sum = 0.0;
+
+    for (Long64_t i = 0; i < nEntries; ++i) {
+        tree->GetEntry(index_list[i]);
+        if (EventID != current_event_id) {
+            if (verbose > 0) {cout << "Current Event ID: " << EventID << ", finished Event ID: " << current_event_id << ", Energy Sum: " << current_energy_sum << " MeV" << endl;}
+            if (current_energy_sum > 0) {hist->Fill(current_energy_sum);}
+            current_event_id = EventID;
+            current_energy_sum = 0.0;
+        }
+        if (VolumeID == 2) { // VolumeID 2 corresponds to the detector
+            current_energy_sum += Energy;
+        }
+    }
+    hist->Fill(current_energy_sum); // Fill the last event's energy sum
+    return hist;
+}
+
 void GetPositionHistogram(TTree* tree, string name) {
     double x_max = 120;
     double y_max = 120;
@@ -68,6 +101,18 @@ void GetPositionHistogram(TTree* tree, string name) {
 }
 
 
+TH1D* GetMeasuredDecays(TTree* measured_tree, int verbose = 0) {
+    TH1D* hist_detector = new TH1D("h1_detector", "Measured Decays in Detector;Energy (MeV);Counts", 1000, 0, 10);
+    measured_tree->Draw("EnergyDetector>>h1_detector", "", "goff");
+    TCanvas* canvas = new TCanvas("detector_canvas", "Measured Decays in Detector", 1200, 600);
+    hist_detector->Draw();
+    TH1D* hist_target = new TH1D("h1_target", "Measured Decays in Target;Energy (MeV);Counts", 1000, 0, 10);
+    measured_tree->Draw("EnergyTarget>>h1_target", "", "goff");
+    TCanvas* canvas_target = new TCanvas("target_canvas", "Measured Decays in Target", 1200, 600);
+    hist_target->Draw();
+    return hist_detector;
+}
+
 void GetEfficiency(TH1D* hist, Long64_t n_events, double Emin, double Emax) {
     int bin_min = hist->FindBin(Emin);
     int bin_max = hist->FindBin(Emax);
@@ -77,7 +122,7 @@ void GetEfficiency(TH1D* hist, Long64_t n_events, double Emin, double Emax) {
 }
 
 void GetHistogram() {
-    TString file_name = "../alpha_build/run238U_full_chain.root";
+    TString file_name = "../alpha_build/run234U_bulk.root";
     TString histname = "H11";
     TString parent_tree_name = "ParentPos";
 
@@ -93,6 +138,11 @@ void GetHistogram() {
         cout << "Tree " << parent_tree_name << " not found in file " << file_name << endl;
         return;
     }
+    TH2D* sim_nuclides = new TH2D("sim_nuclides", "Simulated Nuclides;Nuclide;Counts", 160, 100, 260, 100, 0, 100);
+    parent_tree->Draw("Z:A>>sim_nuclides", "", "goff");
+    TCanvas* canvas_nuclides = new TCanvas("canvas_nuclides", "Simulated Nuclides", 1200, 600);
+    sim_nuclides->Draw("colz");
+    
     Long64_t n_events = parent_tree->GetEntries();
     GetPositionHistogram(parent_tree, "ParentPos");
     double E_238U = 4.20;
@@ -104,5 +154,12 @@ void GetHistogram() {
     hist->SetStats(0);
     hist->SetTitle("Energy Deposited in Detector;Energy [MeV];Counts per 10 keV");
     hist->Draw("hist");
+
+    TTree* measured_tree = (TTree*)file->Get("Measured");
+    if (!measured_tree) {
+        cout << "Tree Measured not found in file " << file_name << endl;
+        return;
+    }
+    TH1D* measured_hist = GetMeasuredDecays(measured_tree, 0);
 
 }

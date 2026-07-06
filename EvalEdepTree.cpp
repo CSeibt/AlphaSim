@@ -52,6 +52,18 @@ TH1D* GetEnergyInDetector(TTree* tree, TTreeIndex* index, int verbose = 0) {
     return hist;
 }
 
+TH1D* GetMeasuredDecays(TTree* measured_tree, int verbose = 0) {
+    TH1D* hist_detector = new TH1D("h1_detector", "Measured Decays in Detector;Energy (MeV);Counts", 1000, 0, 10);
+    measured_tree->Draw("EnergyDetector>>h1_detector", "", "goff");
+    TCanvas* canvas = new TCanvas("detector_canvas", "Measured Decays in Detector", 1200, 600);
+    hist_detector->Draw();
+    TH1D* hist_target = new TH1D("h1_target", "Measured Decays in Target;Energy (MeV);Counts", 1000, 0, 10);
+    measured_tree->Draw("EnergyTarget>>h1_target", "", "goff");
+    TCanvas* canvas_target = new TCanvas("target_canvas", "Measured Decays in Target", 1200, 600);
+    hist_target->Draw();
+    return hist_detector;
+}
+
 void EvalEdepTree() {
     TString file_name = "../alpha_build/run238U_full_chain.root";
     TString tree_name = "EDeps";
