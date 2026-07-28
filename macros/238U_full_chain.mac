@@ -8,7 +8,7 @@
 /alpha/det/setTargetHalfY 10 cm
 /alpha/det/setTargetHalfZ 75 um
 #
-/run/numberOfThreads 4
+/run/numberOfThreads 16
 
 /run/initialize
 #/process/had/rdm/nucleusLimits 237 239 91 93
@@ -24,6 +24,6 @@
 /gun/ion 92 238
 
 /run/fileName run238U_full_chain.root
-/run/printProgress 1000
-/run/beamOn 100000
+/run/printProgress 10000
+/run/beamOn 1000000
 

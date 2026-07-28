@@ -65,7 +65,7 @@ TH1D* GetMeasuredDecays(TTree* measured_tree, int verbose = 0) {
 }
 
 void EvalEdepTree() {
-    TString file_name = "../alpha_build/run238U_full_chain.root";
+    TString file_name = "../results/run234U_10nm.root";
     TString tree_name = "EDeps";
 
     TString histname = "H11";
