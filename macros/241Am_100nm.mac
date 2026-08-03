@@ -1,0 +1,28 @@
+#Set up geometry
+/alpha/det/setTargetShape AmSource
+/alpha/det/setTargetZ 2 mm
+/alpha/det/setTargetMaterial Steel
+
+/control/verbose 2
+/run/verbose 1
+#
+/run/numberOfThreads 16
+
+/run/initialize
+/process/had/rdm/nucleusLimits 240 242 94 96
+/process/had/rdm/thresholdForVeryLongDecayTime 1e20 y
+
+
+/generator/setPositionMode InBulk
+/generator/setDepthInTarget 100 nm
+#/generator/setPositionMode Point
+#/generator/setPositionX 0
+#/generator/setPositionY 0
+#/generator/setPositionZ 1 cm
+/gun/particle ion
+/gun/ion 95 241
+
+/run/fileName ../results/run241Am_100nm.root
+/run/printProgress 10000
+/run/beamOn 1000000
+
