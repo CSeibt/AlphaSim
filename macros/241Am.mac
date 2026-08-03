@@ -6,7 +6,7 @@
 /control/verbose 2
 /run/verbose 1
 #
-/run/numberOfThreads 4
+/run/numberOfThreads 8
 
 /run/initialize
 /process/had/rdm/nucleusLimits 240 242 94 96
