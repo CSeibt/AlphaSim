@@ -26,7 +26,8 @@
 
 #include "BiasedRDPhysics.hh"
 
-#include "G4Radioactivation.hh"
+//#include "G4Radioactivation.hh"
+#include "G4RadioactiveDecay.hh"
 #include "G4GenericIon.hh"
 #include "globals.hh"
 #include "G4PhysicsListHelper.hh"
@@ -45,9 +46,9 @@ G4_DECLARE_PHYSCONSTR_FACTORY(BiasedRDPhysics);
 
 
 BiasedRDPhysics::BiasedRDPhysics(G4int)
- : G4VPhysicsConstructor("G4Radioactivation")
+ : G4VPhysicsConstructor("G4RadioactiveDecay")
 {
-  G4EmParameters::Instance()->AddPhysics("World","G4Radioactivation");
+  G4EmParameters::Instance()->AddPhysics("World","G4RadioactiveDecay");
   G4DeexPrecoParameters* deex = G4NuclearLevelData::GetInstance()->GetParameters();
   deex->SetStoreICLevelData(true);
   deex->SetMaxLifeTime(G4NuclideTable::GetInstance()->GetThresholdOfHalfLife()
@@ -81,6 +82,6 @@ void BiasedRDPhysics::ConstructProcess()
   }
 
   G4PhysicsListHelper::GetPhysicsListHelper()->
-    RegisterProcess(new G4Radioactivation(), G4GenericIon::GenericIon());
+    RegisterProcess(new G4RadioactiveDecay(), G4GenericIon::GenericIon());
 }
 

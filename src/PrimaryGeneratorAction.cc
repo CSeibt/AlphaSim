@@ -148,9 +148,23 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (fPositionMode == "InBulk") {
       if (fTargetSolidType == "G4Tubs") {
         G4ThreeVector target_pos = targetPhys->GetTranslation();
-        if (targetPhys->GetMotherLogical()->GetName() == "Detector") {
+        G4VPhysicalVolume* motherPhys;
+        G4String motherName = targetPhys->GetMotherLogical()->GetName();
+        while (motherName != "Detector" && motherName != "World") {
+          motherPhys = pvs->GetVolume(motherName + "Phys");
+          if (!motherPhys) {
+            G4ExceptionDescription msg;
+            msg << "Cannot find mother physical volume for target !";
+            G4Exception("PrimaryGeneratorAction::GeneratePrimaries()",
+              "MyCode0002", FatalException, msg);
+          }
+          target_pos += motherPhys->GetTranslation();
+          motherName = motherPhys->GetMotherLogical()->GetName();
+        }
+        //while (targetPhys->GetMotherLogical()->GetName() != "Detector") {
+        if (motherName == "Detector") {
           // If the target is placed inside the detector, we need to take into account the position of the target in the detector
-          G4VPhysicalVolume* detectorPhys = pvs->GetVolume("Detector");
+          G4VPhysicalVolume* detectorPhys = pvs->GetVolume("DetectorPhys");
           G4ThreeVector det_pos = detectorPhys->GetTranslation();
           target_pos += det_pos;
         }
@@ -169,9 +183,23 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         // G4cout << "Generated Event: x=" << x/cm << " cm, y=" << y/cm << " cm, z=" << z/cm << " cm" << G4endl;
       } else if (fTargetSolidType == "G4Box") {
         G4ThreeVector target_pos = targetPhys->GetTranslation();
-        if (targetPhys->GetMotherLogical()->GetName() == "Detector") {
+        G4VPhysicalVolume* motherPhys;
+        G4String motherName = targetPhys->GetMotherLogical()->GetName();
+        while (motherName != "Detector" && motherName != "World") {
+          motherPhys = pvs->GetVolume(motherName + "Phys");
+          if (!motherPhys) {
+            G4ExceptionDescription msg;
+            msg << "Cannot find mother physical volume for target !";
+            G4Exception("PrimaryGeneratorAction::GeneratePrimaries()",
+              "MyCode0002", FatalException, msg);
+          }
+          target_pos += motherPhys->GetTranslation();
+          motherName = motherPhys->GetMotherLogical()->GetName();
+        }
+        //while (targetPhys->GetMotherLogical()->GetName() != "Detector") {
+        if (motherName == "Detector") {
           // If the target is placed inside the detector, we need to take into account the position of the target in the detector
-          G4VPhysicalVolume* detectorPhys = pvs->GetVolume("Detector");
+          G4VPhysicalVolume* detectorPhys = pvs->GetVolume("DetectorPhys");
           G4ThreeVector det_pos = detectorPhys->GetTranslation();
           target_pos += det_pos;
         }
@@ -195,9 +223,23 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (fPositionMode == "OnSurface") {
       if (fTargetSolidType == "G4Tubs") {
         G4ThreeVector target_pos = targetPhys->GetTranslation();
-        if (targetPhys->GetMotherLogical()->GetName() == "Detector") {
+        G4VPhysicalVolume* motherPhys;
+        G4String motherName = targetPhys->GetMotherLogical()->GetName();
+        while (motherName != "Detector" && motherName != "World") {
+          motherPhys = pvs->GetVolume(motherName + "Phys");
+          if (!motherPhys) {
+            G4ExceptionDescription msg;
+            msg << "Cannot find mother physical volume for target !";
+            G4Exception("PrimaryGeneratorAction::GeneratePrimaries()",
+              "MyCode0002", FatalException, msg);
+          }
+          target_pos += motherPhys->GetTranslation();
+          motherName = motherPhys->GetMotherLogical()->GetName();
+        }
+        //while (targetPhys->GetMotherLogical()->GetName() != "Detector") {
+        if (motherName == "Detector") {
           // If the target is placed inside the detector, we need to take into account the position of the target in the detector
-          G4VPhysicalVolume* detectorPhys = pvs->GetVolume("Detector");
+          G4VPhysicalVolume* detectorPhys = pvs->GetVolume("DetectorPhys");
           G4ThreeVector det_pos = detectorPhys->GetTranslation();
           target_pos += det_pos;
         }

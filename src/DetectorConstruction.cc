@@ -352,6 +352,9 @@ void DetectorConstruction::DefineMaterials()
       G4Material* Gadolinium = man->FindOrBuildMaterial("G4_Gd"); // Gadolinium
       fTargetMater = Gadolinium;
     }
+    else if (fTargetMaterOpt == "Steel") {
+      fTargetMater = StainlessSteel;
+    }
     else {
       G4cout << "WRONG MATERIAL SELECTED!!!!"  << G4endl;
       return;
@@ -411,14 +414,17 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   G4LogicalVolume* lWorld = new G4LogicalVolume(sWorld,fWorldMater,"World");
   fPhysiWorld = new G4PVPlacement(0,G4ThreeVector(),lWorld,"World",0,false,  0);
 
+  G4cout << "Build World. " << G4endl;
+
   /*===========================================
                   Detecton
   ===========================================*/
   //Defines and places detector volume in world
   G4Tubs* sDetector = new G4Tubs("Detector", 0.,fDetectorThickness , 0.5*fDetectorLength, 0.,twopi);
   fLogicDetector = new G4LogicalVolume(sDetector, fDetectorMater, "Detector");
-  new G4PVPlacement(0,G4ThreeVector(0.,0.,0.5*fDetectorLength),fLogicDetector,"Detector",lWorld,false,0);
+  new G4PVPlacement(0,G4ThreeVector(0.,0.,0.5*fDetectorLength),fLogicDetector,"DetectorPhys",lWorld,false,0);
 
+  G4cout << "Build Detector. " << G4endl;
   /*===========================================
                   Wafer
   ===========================================*/
@@ -427,11 +433,13 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   fWaferZPosition = -0.5*fDetectorLength + fWaferThickness/2.;
   if (fSimWafer){
     G4Tubs* sWafer = new G4Tubs("SWafer", 0.,fWaferRadius, 0.5*fWaferThickness, 0.,twopi);
-    fLogicWafer = new G4LogicalVolume(sWafer, fWaferMater, "LWafer");
-    new G4PVPlacement(0,G4ThreeVector(0.,0.,fWaferZPosition),fLogicWafer,"PWafer",fLogicDetector,false,0);
+    fLogicWafer = new G4LogicalVolume(sWafer, fWaferMater, "Wafer");
+    new G4PVPlacement(0,G4ThreeVector(0.,0.,fWaferZPosition),fLogicWafer,"WaferPhys",fLogicDetector,false,0);
 
     fTarZ += fWaferThickness;
+    G4cout << "Build Wafer. " << G4endl;
   }
+  
 
   /*===========================================
                   Target
@@ -565,6 +573,21 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
     fLogicTarget->SetUserLimits(TargetStepLimit);
     fLogicDetector->SetUserLimits(TargetStepLimit);
 
+  } else if (fTargetShape == "AmSource") {
+    G4double SourceHalfThickness = 0.5*0.5*mm;
+    G4double SourceRadius = 0.5*25*mm;
+    G4Tubs* sSource = new G4Tubs("Source", 0., SourceRadius, SourceHalfThickness, 0.,twopi);
+    G4LogicalVolume* fLogicSource = new G4LogicalVolume(sSource, fTargetMater,"FullSource");
+    fLogicSource->SetVisAttributes(G4Colour(0.8, 0.8, 0.8, 1.0)); //bright grey for passive source 
+    new G4PVPlacement(0, G4ThreeVector(fTarX,fTarY,-0.5*fDetectorLength+0.5*SourceHalfThickness+fTarZ), fLogicSource,"FullSourcePhys",fLogicDetector,false,0);
+
+    G4double TargetSpotR = 0.5*7*mm;
+    G4Tubs* sActiveSource = new G4Tubs("ActiveSource", 0., TargetSpotR, SourceHalfThickness, 0.,twopi);
+    fLogicTarget = new G4LogicalVolume(sActiveSource, fTargetMater,"Target");
+    fLogicTarget->SetVisAttributes(G4Colour(1.0, 0.0 , 0.0, 1.0)); //red for target
+    new G4PVPlacement(0, G4ThreeVector(0*mm, 0*mm, 0*mm), fLogicTarget,"TargetPhys",fLogicSource,false,0);
+    G4cout << "Build AmSource. " << G4endl;
+
   }
   else {
     G4cout << "Target"  << G4endl;
@@ -573,6 +596,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
     G4cout << "****************************************************"<< G4endl;
      return fPhysiWorld;
   }
+  G4cout << "Build Target. " << G4endl;
 
   //===========================================================================
   //          Chamber Bottom
@@ -586,7 +610,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   G4LogicalVolume *LogicCamberBot = new G4LogicalVolume( SolidChamberBot, fChamberMater, "ChamberBot", 0, 0, 0);
 
   // Plased at the Bottom
-  new G4PVPlacement(0,positionChamberBot, LogicCamberBot,"ChamberBot",lWorld,false,0);
+  new G4PVPlacement(0,positionChamberBot, LogicCamberBot,"ChamberBotPhys",lWorld,false,0);
 
   //===========================================================================
   //          Chamber Top
@@ -600,7 +624,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   G4LogicalVolume *LogicCamberTop = new G4LogicalVolume( SolidChamberTop, fChamberMater, "ChamberTop", 0, 0, 0);
 
   // Plased at the Top
-  new G4PVPlacement(0,positionChamberTop,LogicCamberTop,"ChamberTop",lWorld,false,0);
+  new G4PVPlacement(0,positionChamberTop,LogicCamberTop,"ChamberTopPhys",lWorld,false,0);
 
   //===========================================================================
   //          Chamber Wall
@@ -610,7 +634,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   G4ThreeVector positionChamberWall = G4ThreeVector(0.,0.,fDetectorLength/2.);
   G4Tubs *SolidChamberWall = new G4Tubs("chamberwall",fDetectorThickness,fDetectorThickness+ChamWallThick,fDetectorLength/2.,0.,twopi);
   G4LogicalVolume *LogicCamberWall = new G4LogicalVolume( SolidChamberWall, fChamberMater, "ChamberWall", 0, 0, 0);
-  new G4PVPlacement(0,positionChamberWall,LogicCamberWall,"ChamberWall",lWorld,false,0);
+  new G4PVPlacement(0,positionChamberWall,LogicCamberWall,"ChamberWallPhys",lWorld,false,0);
 
   //===========================================================================
   //          Anode
@@ -622,7 +646,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   G4ThreeVector positionAnode = G4ThreeVector(0.,0.,0.);
   G4Tubs *SolidAnode = new G4Tubs("anode",0.,fAnodeRadius,fAnodeThickness/2.,0.,twopi);
   fLogicAnode = new G4LogicalVolume( SolidAnode, fAnodeMater, "Anode", 0, 0, 0);
-  new G4PVPlacement(0,positionAnode,fLogicAnode,"Anode",fLogicDetector,false,0);
+  new G4PVPlacement(0,positionAnode,fLogicAnode,"AnodePhys",fLogicDetector,false,0);
 
 
   //===========================================================================
@@ -643,11 +667,11 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   // Construction of the grid holders
   G4Tubs *SGridUpHolder1 = new G4Tubs("SGridUpHolder1",fGridHolderIRadius,fGridHolderORadius,fGridHolderThickness1/2.,0.,twopi);
   fLogicGridUpHolder1 = new G4LogicalVolume(SGridUpHolder1, fAnodeMater, "LGridUpHolder1", 0, 0, 0);
-  new G4PVPlacement(0, positionGrid+offsetHolder1, fLogicGridUpHolder1, "PGridUpHolder1", fLogicDetector, false, 0);
+  new G4PVPlacement(0, positionGrid+offsetHolder1, fLogicGridUpHolder1, "LGridUpHolder1Phys", fLogicDetector, false, 0);
 
   G4Tubs *SGridUpHolder2 = new G4Tubs("SGridUpHolder2",fGridHolderIRadius,fGridHolderORadius,fGridHolderThickness2/2.,0.,twopi);
   fLogicGridUpHolder2 = new G4LogicalVolume(SGridUpHolder2, fAnodeMater, "LGridUpHolder2", 0, 0, 0);
-  new G4PVPlacement(0, positionGrid+offsetHolder2, fLogicGridUpHolder2, "PGridUpHolder2", fLogicDetector, false, 0);
+  new G4PVPlacement(0, positionGrid+offsetHolder2, fLogicGridUpHolder2, "LGridUpHolder2Phys", fLogicDetector, false, 0);
   //===========================================================================
   //          Grid2
   //===========================================================================
@@ -655,11 +679,11 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   //Position, Material and Placement
   G4Tubs *SGridDownHolder1 = new G4Tubs("SGridDownHolder1",fGridHolderIRadius,fGridHolderORadius,fGridHolderThickness1/2.,0.,twopi);
   fLogicGridDownHolder1 = new G4LogicalVolume(SGridDownHolder1, fAnodeMater, "LGridDownHolder1", 0, 0, 0);
-  new G4PVPlacement(0,-1*(positionGrid+offsetHolder1), fLogicGridDownHolder1, "PGridDownHolder1", fLogicDetector, false, 0);
+  new G4PVPlacement(0,-1*(positionGrid+offsetHolder1), fLogicGridDownHolder1, "LGridDownHolder1Phys", fLogicDetector, false, 0);
 
   G4Tubs *SGridDownHolder2 = new G4Tubs("SGridDownHolder2",fGridHolderIRadius,fGridHolderORadius,fGridHolderThickness2/2.,0.,twopi);
   fLogicGridDownHolder2 = new G4LogicalVolume(SGridDownHolder2, fAnodeMater, "LGridDownHolder2", 0, 0, 0);
-  new G4PVPlacement(0,-1*(positionGrid+offsetHolder2), fLogicGridDownHolder2, "PGridDownHolder2", fLogicDetector, false, 0);
+  new G4PVPlacement(0,-1*(positionGrid+offsetHolder2), fLogicGridDownHolder2, "LGridDownHolder2Phys", fLogicDetector, false, 0);
 
   //===========================================================================
   // distance rods between the grid holders
@@ -695,13 +719,14 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
     new G4PVPlacement(0, posRodShortDown, fLRodShort,nameDown, fLogicDetector, false, 0);
   }
 
+  G4cout << "Build Grid Holders and Rods. " << G4endl;
   /*===========================================
                   SetVisAtributes
   ===========================================*/
   lWorld->SetVisAttributes(G4VisAttributes::GetInvisible());
   fLogicDetector  ->SetVisAttributes(G4Colour(0.0, 0.0 , 0.0, 0.0));  //green for detector
   if (fSimWafer) {fLogicWafer     ->SetVisAttributes(G4Colour(0, 0 , 0, 1.));} //blue for wafer
-  fLogicTarget    ->SetVisAttributes(G4Colour(1.0, 0.0 , 0.0, 1.0)); //red for target
+  //fLogicTarget    ->SetVisAttributes(G4Colour(1.0, 0.0 , 0.0, 1.0)); //red for target
   LogicCamberBot  ->SetVisAttributes(G4Colour(1.0, 1.0 , 1.0, 0.3));
   LogicCamberTop  ->SetVisAttributes(G4Colour(1.0, 1.0 , 1.0, 0.3));
   LogicCamberWall ->SetVisAttributes(G4Colour(1.0, 1.0 , 1.0, 0.3));
@@ -714,6 +739,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   fLRodShort      ->SetVisAttributes(G4Colour(0.0, 0.7, 0.4, 1.0));
   fLRodLong       ->SetVisAttributes(G4Colour(0.0, 0.7, 0.4, 1.0));
   
+  G4cout << "Set Vis Attributes. " << G4endl;
 
   //Prints the parameters
   PrintParameters();
@@ -731,6 +757,7 @@ G4VPhysicalVolume* DetectorConstruction::ConstructVolumes()
   // fLogicTarget->SetUserLimits(StepLimit);
 
   //always return the root volume
+  G4cout << "Build Detector and Target. " << G4endl;
   return fPhysiWorld;
 }
 
@@ -797,6 +824,9 @@ void DetectorConstruction::SetTargetMaterial(G4String materialChoice)
     fTargetMaterOpt = materialChoice;
   }
   else if(materialChoice=="P10"){
+    fTargetMaterOpt = materialChoice;
+  }
+  else if(materialChoice=="Steel"){
     fTargetMaterOpt = materialChoice;
   }
   else {

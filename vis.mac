@@ -5,11 +5,13 @@
 # and initializes the graphic.
 
 #Set up geometry
-/alpha/det/setTargetShape Box
-/alpha/det/setTargetMaterial PEN 
-/alpha/det/setTargetHalfX 10 cm
-/alpha/det/setTargetHalfY 10 cm
-/alpha/det/setTargetHalfZ 0.075 mm
+/alpha/det/setTargetShape AmSource
+#/alpha/det/setTargetMaterial PEN 
+#/alpha/det/setTargetHalfX 10 cm
+#/alpha/det/setTargetHalfY 10 cm
+#/alpha/det/setTargetHalfZ 0.075 mm
+/alpha/det/setTargetZ 2 mm
+/alpha/det/setTargetMaterial Steel
 #
 /control/verbose 2
 /run/verbose 2
@@ -94,6 +96,9 @@
 #
 # For file-based drivers, use this to create an empty detector view:
 #/vis/viewer/flush
+/process/had/rdm/nucleusLimits 240 242 94 96
+/process/had/rdm/thresholdForVeryLongDecayTime 1e20 y
+
 
 /generator/setPositionMode OnSurface
 #/generator/setPositionMode Point
@@ -101,6 +106,6 @@
 #/generator/setPositionY 0
 #/generator/setPositionZ 1 cm
 /gun/particle ion
-/gun/ion 64 148
+/gun/ion 95 241
 
 
