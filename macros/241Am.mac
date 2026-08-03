@@ -1,4 +1,8 @@
-#                                                                         
+#Set up geometry
+/alpha/det/setTargetShape AmSource
+/alpha/det/setTargetZ 2 mm
+/alpha/det/setTargetMaterial Steel
+
 /control/verbose 2
 /run/verbose 1
 #
@@ -7,7 +11,8 @@
 /run/initialize
 /process/had/rdm/nucleusLimits 240 242 94 96
 
-/generator/setPositionMode OnSurface
+/generator/setPositionMode InBulk
+/generator/setDepthInTarget 1 um
 #/generator/setPositionMode Point
 #/generator/setPositionX 0
 #/generator/setPositionY 0
@@ -15,6 +20,7 @@
 /gun/particle ion
 /gun/ion 95 241
 
-/run/fileName run241Am.root
-/run/beamOn 10000
+/run/fileName run241Am_1um.root
+/run/printprogress 10000
+/run/beamOn 100000
 
