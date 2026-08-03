@@ -22,10 +22,10 @@ using namespace std;
 #include "GetHistAll.cpp"
 
 void GetPositionHistogram(TTree* tree, string name) {
-    double x_max = 120;
-    double y_max = 120;
-    double z_min = 1;
-    double z_max = 2;
+    double x_max = 11;
+    double y_max = 11;
+    double z_min = 2;
+    double z_max = 3;
     TH2D* h2_x_y = new TH2D((name + "_h2_x_y").c_str(), (name + "_h2_x_y").c_str(), 120, -x_max, x_max, 120, -y_max, y_max);
     TH2D* h2_x_z = new TH2D((name + "_h2_x_z").c_str(), (name + "_h2_x_z").c_str(), 120, -x_max, x_max, 90, z_min, z_max);
     TH2D* h2_y_z = new TH2D((name + "_h2_y_z").c_str(), (name + "_h2_y_z").c_str(), 120, -y_max, y_max, 90, z_min, z_max);
