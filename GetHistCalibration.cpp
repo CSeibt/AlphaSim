@@ -73,6 +73,8 @@ void GetHistCalibration(){
     string nuclide1 = "241Am";
     string file_name1 = "../results/run241Am_1um.root";
 
+    string file_name2 = "../results/run241Am_100nm.root";
+
     TFile* sim_file = new TFile(file_name1.c_str(), "READ");
     if (!sim_file || sim_file->IsZombie()) {
         cout << "Error opening file: " << file_name1 << endl;
@@ -89,20 +91,42 @@ void GetHistCalibration(){
         cout << "Histogram H11 not found in file " << file_name1 << endl;
         return;
     }
+    hist1->SetName("hist_Am_1um");
+
+    TFile* sim_file2 = new TFile(file_name2.c_str(), "READ");
+    if (!sim_file2 || sim_file2->IsZombie()) {
+        cout << "Error opening file: " << file_name2 << endl;
+        return;
+    }
+    TH1D* hist2 = (TH1D*)sim_file2->Get("H11");
+    if (!hist2) {
+        cout << "Histogram H11 not found in file " << file_name2 << endl;
+        return;
+    }
+    hist2->SetName("hist_Am_100nm");
     TF1* fwhm_fit = new TF1("fwhm_fit", "[0] + [1]*x", 0, 10);
     fwhm_fit->SetParameters(0.0121, 0.0128); //
     TH1D* hist1_smeard = GetSmearedHist(hist1, fwhm_fit);
+    TH1D* hist2_smeard = GetSmearedHist(hist2, fwhm_fit);
     TCanvas* c1 = new TCanvas("c1", "Calibration Histogram", 1200, 600);
     hist1->SetLineColor(kBlue);
     hist1->SetLineWidth(2);
     hist1->GetXaxis()->SetTitle("Energy (MeV)");
     hist1->GetYaxis()->SetTitle("Counts");
     hist1->Draw("HIST");
-    hist1_smeard->SetLineColor(kRed);
+    hist1_smeard->SetLineColor(kBlue+2);
     hist1_smeard->SetLineWidth(2);
     hist1_smeard->Draw("HIST SAME");
+    hist2->SetLineColor(kGreen);
+    hist2->SetLineWidth(2);
+    hist2->Draw("HIST SAME");
+    hist2_smeard->SetLineColor(kGreen+2);
+    hist2_smeard->SetLineWidth(2);
+    hist2_smeard->Draw("HIST SAME");
     TLegend* legend = new TLegend(0.7, 0.7, 0.9, 0.9);
     legend->AddEntry(hist1, "Original Histogram", "l");
     legend->AddEntry(hist1_smeard, "Smeared Histogram", "l");
+    legend->AddEntry(hist2, "Original Histogram (100nm)", "l");
+    legend->AddEntry(hist2_smeard, "Smeared Histogram (100nm)", "l");
     legend->Draw();
 }
