@@ -109,20 +109,22 @@ void GetHistCalibration(){
     TH1D* hist1_smeard = GetSmearedHist(hist1, fwhm_fit);
     TH1D* hist2_smeard = GetSmearedHist(hist2, fwhm_fit);
     TCanvas* c1 = new TCanvas("c1", "Calibration Histogram", 1200, 600);
+    hist2->SetLineColor(kGreen);
+    hist2->SetLineWidth(2);
+    hist2->Draw("HIST");
+    hist2_smeard->SetLineColor(kGreen+2);
+    hist2_smeard->SetLineWidth(2);
+    hist2_smeard->Draw("HIST SAME");
+
     hist1->SetLineColor(kBlue);
     hist1->SetLineWidth(2);
     hist1->GetXaxis()->SetTitle("Energy (MeV)");
     hist1->GetYaxis()->SetTitle("Counts");
-    hist1->Draw("HIST");
+    hist1->Draw("HIST SAME");
     hist1_smeard->SetLineColor(kBlue+2);
     hist1_smeard->SetLineWidth(2);
     hist1_smeard->Draw("HIST SAME");
-    hist2->SetLineColor(kGreen);
-    hist2->SetLineWidth(2);
-    hist2->Draw("HIST SAME");
-    hist2_smeard->SetLineColor(kGreen+2);
-    hist2_smeard->SetLineWidth(2);
-    hist2_smeard->Draw("HIST SAME");
+    
     TLegend* legend = new TLegend(0.7, 0.7, 0.9, 0.9);
     legend->AddEntry(hist1, "Original Histogram", "l");
     legend->AddEntry(hist1_smeard, "Smeared Histogram", "l");
