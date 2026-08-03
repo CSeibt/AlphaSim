@@ -20,7 +20,7 @@
 /gun/particle ion
 /gun/ion 95 241
 
-/run/fileName run241Am_1um.root
+/run/fileName ../results/run241Am_1um.root
 /run/printProgress 10000
 /run/beamOn 100000
 
