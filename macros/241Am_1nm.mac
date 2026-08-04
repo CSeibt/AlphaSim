@@ -22,7 +22,7 @@
 /gun/particle ion
 /gun/ion 95 241
 
-/run/fileName ../results/run241Am_100nm.root
+/run/fileName ../results/run241Am_1nm.root
 /run/printProgress 10000
 /run/beamOn 100000
 
